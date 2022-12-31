@@ -32,8 +32,8 @@ public:
 
         alloc = __Allocate_map_memory(alloc, size);
 
-        fprintf(stdout, "size index array: %p\n", alloc->Index_stack);
-        fprintf(stdout, "size core array: %p\n", alloc->Core_stack);
+        fprintf(stdout, "index array: %p\n", alloc->Index_stack);
+        fprintf(stdout, "core array: %p\n", alloc->Core_stack);
 
         return alloc->__core_error_treat;
     }
