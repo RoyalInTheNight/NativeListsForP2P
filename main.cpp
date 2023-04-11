@@ -1,22 +1,13 @@
 //
 // Created by MikoG on 31.12.2022.
 //
-#include <stdio.h>
+#include <iostream>
 #include "maps.h"
 
 int main() {
-    list<char, short, int> lis;
+    pet_map<core_maps::int32_t, std::string> map;
 
-    int debug = lis.test(43, 31, 1);
+    map.insert(pet_map<int, std::string>::value_type(32, "ewqe"));
 
-    if (debug == 0)
-        fprintf(stdout, "Success.\n");
-
-    else if (debug == -1)
-        fprintf(stdout, "Alloc error.\n");
-
-    else if (debug == -2)
-        fprintf(stdout, "Size error.\n");
-
-
+    std::string res = map.at(32);
 }

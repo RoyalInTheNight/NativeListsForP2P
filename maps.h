@@ -6,36 +6,62 @@
 #define NATIVEBETA_MAPS_H
 
 #include "allocator_lists.h"
+#include "SPtr.h"
 
-template<class __Key, class __Type, typename __Size_type> class list
-        : protected __Allocate {
-    typedef unsigned long long uint64_t;
-    typedef long long           int64_t;
-    typedef unsigned long      uint32_t;
-    typedef long                int32_t;
-    typedef unsigned short     uint16_t;
-    typedef short               int16_t;
-    typedef unsigned char       uint8_t;
-    typedef char                 int8_t;
+template<class Key_t, class Type_t, class allocator = Allocator_elem<Key_t, Type_t>> class pet_map
+        : public allocator {
+private:
+    static SPtr<allocator> map_elems;
+    ptr::size_t  control_size;
+    ptr::size_t  elem_f_treat;
 
-    typedef __Key            index_type;
-    typedef __Type            core_type;
-    typedef __Size_type          size_s;
-
-    typedef __Allocator<__Key, __Type, __Size_type> core;
-
-    core *alloc;
 public:
-    int test(index_type index, core_type core, size_s size) {
-        alloc->__treat_segment = alloc->stack;
-        alloc->__treat_type_alloc = alloc->linear;
+    pet_map(const pet_map<Key_t, Type_t, allocator>& copy) {
+        *this = copy;
+    }
 
-        alloc = __Allocate_map_memory(alloc, size);
+    pet_map() : control_size(1), elem_f_treat(0) {}
 
-        fprintf(stdout, "index array: %p\n", alloc->Index_stack);
-        fprintf(stdout, "core array: %p\n", alloc->Core_stack);
+    static allocator& value_type(Key_t index, Type_t value) {
+        allocator init = Allocator_elem<Key_t, Type_t>::init_data(index, value);
 
-        return alloc->__core_error_treat;
+        return init;
+    }
+
+    static core_maps::empty_t insert(allocator& elem) {
+        map_elems.add_elem(elem);
+    }
+
+    Type_t at(Key_t index) {
+        if (typeid(index).name() == (std::string) core_maps::type_id::char_t) {
+            for (ptr::size_t i = 0; i < map_elems.size(); i++) {
+                if (map_elems[i].get_key() == (std::string) index)
+                    return map_elems[i].get_elem();
+
+                else
+                    elem_f_treat++;
+            }
+
+            if (elem_f_treat == map_elems.size())
+                throw std::runtime_error("pet_map out of range\n");
+        }
+
+        else {
+            for (ptr::size_t i = 0; i < map_elems.size(); i++) {
+                if (map_elems[i].get_key() == index)
+                    return map_elems[i].get_elem();
+
+                else
+                    elem_f_treat++;
+            }
+
+            if (elem_f_treat == map_elems.size())
+                throw std::runtime_error("pet_map out of range\n");
+        }
+    }
+
+    pet_map<Key_t, Type_t, allocator>& operator=(const pet_map<Key_t, Type_t, allocator>& copy) {
+        *this = copy;
     }
 };
 
